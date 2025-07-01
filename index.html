@@ -785,7 +785,7 @@
                 transform: translate(var(--x), var(--y)) rotate(var(--rot)) scale(0);
                 opacity: 0;
             }
-        }
+            }
 
         /* Glitter particles for buttons */
         .glitter-particle {
@@ -951,7 +951,7 @@
                         Your browser does not support the video tag.
                     </video>
                 </div>
-                <button class="btn btn-primary" onclick="location.reload()">Try Again</button>
+                <button class="btn btn-primary" onclick="location.href='mailto:saswot.dev@gmail.com'">Email me</button>
             </div>
         </div>
 
@@ -1318,7 +1318,8 @@
                     completionHeading.textContent = '🎉 Ausgezeichnet!';
                     completionHeading.classList.add('congrats');
                     completionHeading.classList.remove('keep-practicing');
-                    scoreMessage.textContent = `You've demonstrated a strong grasp of German present tense! Your understanding of verb endings and sentence structure is impressive. Now be honest, is it better or worse than MCQ quizzes and pdf exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
+                    scoreMessage.innerHTML = `You've demonstrated a strong grasp of German present tense! Your understanding of verb endings and sentence structure is impressive.<br><br>
+                                            Now, be honest, is it better or worse than MCQ quizzes and PDF exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
                     
                     createConfetti(); // Trigger large confetti on overall success
                     passSynth.triggerAttackRelease("C5", "8n"); // Play a success sound
@@ -1332,7 +1333,8 @@
                     completionHeading.textContent = 'Keep Practicing!';
                     completionHeading.classList.add('keep-practicing');
                     completionHeading.classList.remove('congrats');
-                    scoreMessage.textContent = `You're making progress! Review the conjugation rules and try again to solidify your understanding. Now be honest, is it better or worse than MCQ quizzes and pdf exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
+                    scoreMessage.innerHTML = `You're making progress! Review the conjugation rules and try again to solidify your understanding.<br><br>
+                                            Now, be honest, is it better or worse than MCQ quizzes and PDF exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
                     
                     failSynth.triggerAttackRelease("C2", "8n"); // Play a failure sound
                     
@@ -1385,7 +1387,7 @@
 
             isRecording = false;
             recordBtn.classList.remove('recording');
-            recordIcon.textContent = '🎤';
+            recordIcon.textContent = '�';
             recordText.textContent = 'Try Again';
             recordingStatus.textContent = 'Processing your pronunciation...';
             audioVisualizer.classList.remove('active');
@@ -1418,3 +1420,4 @@
     </script>
 </body>
 </html>
+�
