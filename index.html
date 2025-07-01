@@ -974,7 +974,8 @@
         const passSynth = new Tone.Synth().toDestination();
         const failSynth = new Tone.MembraneSynth().toDestination();
         const navSound = new Tone.PluckSynth().toDestination(); // New synth for navigation sounds
-        const confettiSound = new Tone.NoiseSynth().toDestination(); // Sound for confetti
+        // Initialize NoiseSynth without arguments for type, which will default to 'white'
+        const confettiSound = new Tone.NoiseSynth().toDestination(); 
 
         // Helper function for robust string comparison
         function normalizeString(str) {
@@ -1059,7 +1060,8 @@
                     confetti.remove();
                 });
             }
-            confettiSound.triggerAttackRelease("C6", "8n"); // Play sound for large confetti
+            // Corrected: NoiseSynth takes duration, not note name
+            confettiSound.triggerAttackRelease("0.2", Tone.now()); 
         }
 
         // Small confetti for individual correct answers
@@ -1103,7 +1105,8 @@
                     confetti.remove();
                 });
             }
-            confettiSound.triggerAttackRelease("C5", "16n"); // Play sound for small confetti
+            // Corrected: NoiseSynth takes duration, not note name
+            confettiSound.triggerAttackRelease("0.1", Tone.now()); 
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1205,10 +1208,13 @@
             
             document.getElementById('prevBtn').style.display = questionNum === 1 ? 'none' : 'block';
             
+            // Reset button to "Check Answer" when a new question is shown
+            document.getElementById('nextBtn').textContent = 'Check Answer';
+            document.getElementById('nextBtn').onclick = checkAnswer; // Re-assign checkAnswer
+            document.getElementById('nextBtn').disabled = false; // Ensure it's enabled
+
             if (questionNum === totalQuestions) {
                 document.getElementById('nextBtn').textContent = 'Finish Quiz';
-            } else {
-                document.getElementById('nextBtn').textContent = 'Check Answer';
             }
             
             updateProgress();
@@ -1218,138 +1224,157 @@
             const feedback = document.getElementById('feedback' + currentQuestion);
             let isCorrect = false;
             let feedbackText = '';
+            const nextBtn = document.getElementById('nextBtn');
 
-            if (currentQuestion === 1) {
-                const dragZone = document.getElementById('dragZone1');
-                const words = Array.from(dragZone.children).map(child => normalizeString(child.textContent));
-                const correctOrder = ['ich', 'gehe', 'gern', 'ins', 'kino']; // Normalized correct answer
-                
-                isCorrect = JSON.stringify(words) === JSON.stringify(correctOrder);
-                
-                if (isCorrect) {
-                    feedbackText = 'Perfect! You correctly built: "Ich gehe gern ins Kino." Notice how "gehe" matches with "ich" (first person singular).';
-                    score++;
-                    createSmallConfetti(dragZone); // Confetti on correct answer
-                } else {
-                    feedbackText = 'Not quite right. The correct order is: Ich gehe gern ins Kino. (I go to the cinema gladly)';
+            // Disable the button to prevent multiple clicks while processing
+            nextBtn.disabled = true;
+
+            // Ensure Tone.js audio context is started on user interaction
+            Tone.start().then(() => {
+                if (currentQuestion === 1) {
+                    const dragZone = document.getElementById('dragZone1');
+                    const words = Array.from(dragZone.children).map(child => normalizeString(child.textContent));
+                    const correctOrder = ['ich', 'gehe', 'gern', 'ins', 'kino']; // Normalized correct answer
+                    
+                    isCorrect = JSON.stringify(words) === JSON.stringify(correctOrder);
+                    
+                    if (isCorrect) {
+                        feedbackText = 'Perfect! You correctly built: "Ich gehe gern ins Kino." Notice how "gehe" matches with "ich" (first person singular).';
+                        score++;
+                        createSmallConfetti(dragZone); // Confetti on correct answer
+                    } else {
+                        feedbackText = 'Not quite right. The correct order is: Ich gehe gern ins Kino. (I go to the cinema gladly)';
+                    }
+                } else if (currentQuestion === 2) {
+                    const ichVal = normalizeString(document.getElementById('ich-input').value);
+                    const duVal = normalizeString(document.getElementById('du-input').value);
+                    const erVal = normalizeString(document.getElementById('er-input').value);
+                    
+                    let incorrectParts = [];
+                    if (ichVal !== 'suche') incorrectParts.push('"ich" (suche)');
+                    if (duVal !== 'suchst') incorrectParts.push('"du" (suchst)');
+                    if (erVal !== 'sucht') incorrectParts.push('"er/sie/es" (sucht)');
+
+                    isCorrect = incorrectParts.length === 0;
+                    
+                    if (isCorrect) {
+                        feedbackText = 'Excellent! You nailed the conjugation pattern: ich suche, du suchst, er/sie/es sucht.';
+                        score++;
+                        createSmallConfetti(document.getElementById('er-input')); // Confetti on correct answer
+                    } else {
+                        feedbackText = `Try again! Your ${incorrectParts.join(', ')} conjugation${incorrectParts.length > 1 ? 's are' : ' is'} incorrect. Remember: ich suche, du suchst, er/sie/es sucht.`;
+                    }
+                } else if (currentQuestion === 3) {
+                    const freuen = normalizeString(document.getElementById('freuen').value);
+                    const kommen = normalizeString(document.getElementById('kommen').value);
+                    const lernen = normalizeString(document.getElementById('lernen').value);
+                    const spielen = normalizeString(document.getElementById('spielen').value);
+                    
+                    let incorrectParts = [];
+                    if (freuen !== 'e') incorrectParts.push('freuen (-e)');
+                    if (kommen !== 'e') incorrectParts.push('kommen (-e)');
+                    if (lernen !== 't') incorrectParts.push('lernen (-t)');
+                    if (spielen !== 'en') incorrectParts.push('spielen (-en)');
+
+                    isCorrect = incorrectParts.length === 0;
+                    
+                    if (isCorrect) {
+                        feedbackText = 'Fantastic! You understood the context perfectly. "ich" takes -e, "Max" (third person) takes -t, "wir" takes -en.';
+                        score++;
+                        createSmallConfetti(document.getElementById('spielen')); // Confetti on correct answer
+                    } else {
+                        feedbackText = `Check your endings: ${incorrectParts.join(', ')}. Remember: ich freue (-e), ich komme (-e), Max lernt (-t), wir spielen (-en).`;
+                    }
+                } else if (currentQuestion === 4) {
+                    const pronunciationFeedback = document.getElementById('pronunciationFeedback');
+                    pronunciationFeedback.style.display = 'block';
+                    
+                    feedbackText = 'Excellent speaking practice! Your pronunciation analysis is complete above.';
+                    isCorrect = true; // Speaking is always "correct" for demo purposes
                 }
-            } else if (currentQuestion === 2) {
-                const ichVal = normalizeString(document.getElementById('ich-input').value);
-                const duVal = normalizeString(document.getElementById('du-input').value);
-                const erVal = normalizeString(document.getElementById('er-input').value);
-                
-                let incorrectParts = [];
-                if (ichVal !== 'suche') incorrectParts.push('"ich" (suche)');
-                if (duVal !== 'suchst') incorrectParts.push('"du" (suchst)');
-                if (erVal !== 'sucht') incorrectParts.push('"er/sie/es" (sucht)');
 
-                isCorrect = incorrectParts.length === 0;
-                
+                feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+                feedback.textContent = feedbackText;
+                feedback.style.display = 'block';
+
                 if (isCorrect) {
-                    feedbackText = 'Excellent! You nailed the conjugation pattern: ich suche, du suchst, er/sie/es sucht.';
-                    score++;
-                    createSmallConfetti(document.getElementById('er-input')); // Confetti on correct answer
+                    // If correct, automatically move to the next question after a short delay
+                    setTimeout(() => {
+                        nextQuestion();
+                    }, 1500); // 1.5 second delay to see feedback
                 } else {
-                    feedbackText = `Try again! Your ${incorrectParts.join(', ')} conjugation${incorrectParts.length > 1 ? 's are' : ' is'} incorrect. Remember: ich suche, du suchst, er/sie/es sucht.`;
+                    // If incorrect, change button to "Move On" and allow user to click it
+                    nextBtn.textContent = 'Move On';
+                    nextBtn.onclick = nextQuestion; // Set onclick to nextQuestion
+                    nextBtn.disabled = false; // Re-enable for user to click
                 }
-            } else if (currentQuestion === 3) {
-                const freuen = normalizeString(document.getElementById('freuen').value);
-                const kommen = normalizeString(document.getElementById('kommen').value);
-                const lernen = normalizeString(document.getElementById('lernen').value);
-                const spielen = normalizeString(document.getElementById('spielen').value);
-                
-                let incorrectParts = [];
-                if (freuen !== 'e') incorrectParts.push('freuen (-e)');
-                if (kommen !== 'e') incorrectParts.push('kommen (-e)');
-                if (lernen !== 't') incorrectParts.push('lernen (-t)');
-                if (spielen !== 'en') incorrectParts.push('spielen (-en)');
-
-                isCorrect = incorrectParts.length === 0;
-                
-                if (isCorrect) {
-                    feedbackText = 'Fantastic! You understood the context perfectly. "ich" takes -e, "Max" (third person) takes -t, "wir" takes -en.';
-                    score++;
-                    createSmallConfetti(document.getElementById('spielen')); // Confetti on correct answer
-                } else {
-                    feedbackText = `Check your endings: ${incorrectParts.join(', ')}. Remember: ich freue (-e), ich komme (-e), Max lernt (-t), wir spielen (-en).`;
-                }
-            } else if (currentQuestion === 4) {
-                const pronunciationFeedback = document.getElementById('pronunciationFeedback');
-                pronunciationFeedback.style.display = 'block';
-                
-                feedbackText = 'Excellent speaking practice! Your pronunciation analysis is complete above.';
-                isCorrect = true; // Speaking is always "correct" for demo purposes
-            }
-
-            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
-            feedback.textContent = feedbackText;
-            feedback.style.display = 'block';
-            document.getElementById('nextBtn').textContent = 'Next Question';
-            document.getElementById('nextBtn').onclick = nextQuestion;
+            }); // End of Tone.start().then()
         }
 
         function nextQuestion() {
-            navSound.triggerAttackRelease("C4", "16n"); // Play sound on next
-            if (currentQuestion < totalQuestions) {
-                currentQuestion++;
-                showQuestion(currentQuestion);
-                document.getElementById('nextBtn').onclick = checkAnswer;
-                document.getElementById('nextBtn').textContent = 'Check Answer';
-            } else {
-                document.getElementById('quizButtons').style.display = 'none';
-                document.getElementById('quizContainer').classList.add('fade-out');
-
-                document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
-                const completionScreen = document.getElementById('completion');
-                completionScreen.classList.add('active');
-                
-                const finalScoreElement = document.getElementById('finalScore');
-                const maxScoreElement = document.getElementById('maxScore');
-                const completionHeading = document.getElementById('completionHeading');
-                const scoreMessage = document.getElementById('scoreMessage');
-                const completionVideo = document.getElementById('completionVideo');
-
-                finalScoreElement.textContent = score;
-                maxScoreElement.textContent = totalGradedQuestions;
-
-                const requiredScore = Math.ceil(totalGradedQuestions * (2/3));
-                
-                if (score >= requiredScore) {
-                    completionHeading.textContent = '🎉 Ausgezeichnet!';
-                    completionHeading.classList.add('congrats');
-                    completionHeading.classList.remove('keep-practicing');
-                    scoreMessage.innerHTML = `You've demonstrated a strong grasp of German present tense! Your understanding of verb endings and sentence structure is impressive.<br><br>
-                                            Now, be honest, is it better or worse than MCQ quizzes and PDF exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
-                    
-                    createConfetti(); // Trigger large confetti on overall success
-                    passSynth.triggerAttackRelease("C5", "8n"); // Play a success sound
-
-                    if (completionVideo) {
-                        completionVideo.play().catch(error => {
-                            console.log("Autoplay prevented:", error);
-                        });
-                    }
+            // Ensure Tone.js audio context is started on user interaction
+            Tone.start().then(() => {
+                navSound.triggerAttackRelease("C4", "16n"); // Play sound on next
+                if (currentQuestion < totalQuestions) {
+                    currentQuestion++;
+                    showQuestion(currentQuestion);
+                    // The showQuestion function now handles resetting the button text and enabling it.
                 } else {
-                    completionHeading.textContent = 'Keep Practicing!';
-                    completionHeading.classList.add('keep-practicing');
-                    completionHeading.classList.remove('congrats');
-                    scoreMessage.innerHTML = `You're making progress! Review the conjugation rules and try again to solidify your understanding.<br><br>
-                                            Now, be honest, is it better or worse than MCQ quizzes and PDF exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
+                    document.getElementById('quizButtons').style.display = 'none';
+                    document.getElementById('quizContainer').classList.add('fade-out');
+
+                    document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+                    const completionScreen = document.getElementById('completion');
+                    completionScreen.classList.add('active');
                     
-                    failSynth.triggerAttackRelease("C2", "8n"); // Play a failure sound
+                    const finalScoreElement = document.getElementById('finalScore');
+                    const maxScoreElement = document.getElementById('maxScore');
+                    const completionHeading = document.getElementById('completionHeading');
+                    const scoreMessage = document.getElementById('scoreMessage');
+                    const completionVideo = document.getElementById('completionVideo');
+
+                    finalScoreElement.textContent = score;
+                    maxScoreElement.textContent = totalGradedQuestions;
+
+                    const requiredScore = Math.ceil(totalGradedQuestions * (2/3));
                     
-                    if (completionVideo) {
-                        completionVideo.pause();
-                        completionVideo.currentTime = 0;
+                    if (score >= requiredScore) {
+                        completionHeading.textContent = '🎉 Ausgezeichnet!';
+                        completionHeading.classList.add('congrats');
+                        completionHeading.classList.remove('keep-practicing');
+                        scoreMessage.innerHTML = `You've demonstrated a strong grasp of German present tense! Your understanding of verb endings and sentence structure is impressive.<br><br>
+                                                Now, be honest, is it better or worse than MCQ quizzes and PDF exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
+                        
+                        createConfetti(); // Trigger large confetti on overall success
+                        passSynth.triggerAttackRelease("C5", "8n"); // Play a success sound
+
+                        if (completionVideo) {
+                            completionVideo.play().catch(error => {
+                                console.log("Autoplay prevented:", error);
+                            });
+                        }
+                    } else {
+                        completionHeading.textContent = 'Keep Practicing!';
+                        completionHeading.classList.add('keep-practicing');
+                        completionHeading.classList.remove('congrats');
+                        scoreMessage.innerHTML = `You're making progress! Review the conjugation rules and try again to solidify your understanding.<br><br>
+                                                Now, be honest, is it better or worse than MCQ quizzes and PDF exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
+                        
+                        failSynth.triggerAttackRelease("C2", "8n"); // Play a failure sound
+                        
+                        if (completionVideo) {
+                            completionVideo.pause();
+                            completionVideo.currentTime = 0;
+                        }
                     }
+
+                    document.getElementById('progressFill').style.width = '100%';
+
+                    setTimeout(() => {
+                        document.getElementById('quizContainer').classList.remove('fade-out');
+                    }, 800); 
                 }
-
-                document.getElementById('progressFill').style.width = '100%';
-
-                setTimeout(() => {
-                    document.getElementById('quizContainer').classList.remove('fade-out');
-                }, 800); 
-            }
+            });
         }
 
         function toggleRecording() {
@@ -1359,23 +1384,26 @@
             const recordIcon = recordBtn.querySelector('.record-icon');
             const recordText = recordBtn.querySelector('.record-text');
 
-            if (!isRecording) {
-                isRecording = true;
-                recordBtn.classList.add('recording');
-                recordIcon.textContent = '⏹️';
-                recordText.textContent = 'Recording... Click to Stop';
-                recordingStatus.textContent = 'Listening for: "Ich gehe morgen ins Theater."';
-                audioVisualizer.classList.add('active');
-                
-                setTimeout(() => {
-                    if (isRecording) {
-                        stopRecording();
-                    }
-                }, 3000);
-                
-            } else {
-                stopRecording();
-            }
+            // Ensure Tone.js audio context is started on user interaction
+            Tone.start().then(() => {
+                if (!isRecording) {
+                    isRecording = true;
+                    recordBtn.classList.add('recording');
+                    recordIcon.textContent = '⏹️';
+                    recordText.textContent = 'Recording... Click to Stop';
+                    recordingStatus.textContent = 'Listening for: "Ich gehe morgen ins Theater."';
+                    audioVisualizer.classList.add('active');
+                    
+                    setTimeout(() => {
+                        if (isRecording) {
+                            stopRecording();
+                        }
+                    }, 3000);
+                    
+                } else {
+                    stopRecording();
+                }
+            });
         }
 
         function stopRecording() {
@@ -1397,22 +1425,26 @@
                 document.getElementById('pronunciationFeedback').style.display = 'block';
                 
                 document.getElementById('nextBtn').textContent = 'Next Question';
-                document.getElementById('nextBtn').onclick = nextQuestion;
+                document.getElementById('nextBtn').onclick = checkAnswer; // Set back to checkAnswer for the next question
             }, 1500);
         }
 
         function playExample() {
-            alert('🔊 Audio example would play here for the soft "ch" sound in "ich".');
+            // Ensure Tone.js audio context is started on user interaction
+            Tone.start().then(() => {
+                alert('🔊 Audio example would play here for the soft "ch" sound in "ich".');
+            });
         }
 
         function previousQuestion() {
-            navSound.triggerAttackRelease("D4", "16n"); // Play sound on previous
-            if (currentQuestion > 1) {
-                currentQuestion--;
-                showQuestion(currentQuestion);
-                document.getElementById('nextBtn').onclick = checkAnswer;
-                document.getElementById('nextBtn').textContent = 'Check Answer';
-            }
+            // Ensure Tone.js audio context is started on user interaction
+            Tone.start().then(() => {
+                navSound.triggerAttackRelease("D4", "16n"); // Play sound on previous
+                if (currentQuestion > 1) {
+                    currentQuestion--;
+                    showQuestion(currentQuestion);
+                }
+            });
         }
 
         // Initialize
