@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>German Present Tense Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <style>
+        /* Global Styles */
         * {
             margin: 0;
             padding: 0;
@@ -13,236 +16,448 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%); /* Softer, more inviting gradient */
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
         }
 
         .quiz-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 850px; /* Slightly wider */
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98); /* Near-white with slight transparency */
+            border-radius: 25px; /* More rounded */
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25); /* Deeper shadow */
             overflow: hidden;
+            transform: scale(1);
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+            position: relative; /* For confetti */
         }
 
-        .quiz-header {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        .quiz-container.fade-out {
+            transform: scale(0.95);
+            opacity: 0.7;
+        }
+
+        /* Initial Greeting Overlay */
+        .greeting-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
             color: white;
-            padding: 30px;
+            font-size: 3rem;
+            font-weight: 800;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            border-radius: 25px; /* Match container radius */
+        }
+
+        .greeting-overlay.hidden {
+            opacity: 0;
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        .greeting-text {
+            transform: scale(0.8);
+            opacity: 0;
+            animation: popInGreeting 1s forwards cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation-delay: 0.5s;
+        }
+
+        .greeting-subtext {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-top: 15px;
+            opacity: 0;
+            animation: fadeIn 0.8s forwards;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes popInGreeting {
+            0% { transform: scale(0.8); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Quiz Header */
+        .quiz-header {
+            background: linear-gradient(135deg, #ff8a00, #e52e71); /* Warm, vibrant gradient */
+            color: white;
+            padding: 35px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+        }
+
+        .quiz-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.15) 0%, transparent 70%);
+            transform: rotate(45deg);
         }
 
         .quiz-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.8rem;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .quiz-header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
+            font-size: 1.2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
         }
 
         .progress-bar {
-            height: 6px;
+            height: 8px; /* Thicker progress bar */
             background: rgba(255,255,255,0.3);
-            border-radius: 3px;
-            margin-top: 20px;
+            border-radius: 4px;
+            margin-top: 25px;
             overflow: hidden;
+            position: relative;
+            z-index: 1;
         }
 
         .progress-fill {
             height: 100%;
             background: white;
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
+        /* Quiz Content */
         .quiz-content {
             padding: 40px;
         }
 
         .question {
             display: none;
-            animation: fadeIn 0.5s ease;
+            animation: fadeInScale 0.7s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
         }
 
         .question.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .question h3 {
-            font-size: 1.5rem;
+            font-size: 2rem;
             color: #2c3e50;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            font-weight: 700;
+        }
+
+        .question h3::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: #ff8a00; /* Match header accent */
+            border-radius: 2px;
         }
 
         .question-text {
-            font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 25px;
-            line-height: 1.6;
+            font-size: 1.2rem;
+            color: #444;
+            margin-bottom: 30px;
+            line-height: 1.7;
+            text-align: center;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
         }
 
+        /* Drag and Drop */
         .drag-zone {
-            min-height: 60px;
-            border: 2px dashed #ddd;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            background: #f8f9fa;
+            min-height: 80px; /* Taller drag zone */
+            border: 3px dashed #b0c4de; /* Softer dashed border */
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #fdfefe; /* Very light background */
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px; /* More space between words */
             flex-wrap: wrap;
             transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.08);
         }
 
         .drag-zone.drag-over {
-            border-color: #007bff;
-            background: #e3f2fd;
+            border-color: #6a11cb; /* Accent color on drag over */
+            background: #e6eafc; /* Lighter accent background */
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1), 0 0 15px rgba(106,17,203,0.3);
         }
 
         .word-options {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
-            margin: 20px 0;
+            margin: 25px 0;
+            justify-content: center;
         }
 
         .word-block {
-            background: #007bff;
+            background: linear-gradient(45deg, #2575fc, #6a11cb); /* Blue-purple gradient */
             color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
+            padding: 14px 25px;
+            border-radius: 30px; /* More pill-like */
             cursor: grab;
             user-select: none;
-            transition: all 0.3s ease;
-            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 12px rgba(37,117,252,0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1; /* For glitter effect */
+        }
+
+        .word-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.15);
+            transform: scale(0);
+            border-radius: 50%;
+            opacity: 0;
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+            z-index: -1;
+        }
+
+        .word-block:hover::before {
+            transform: scale(2.5);
+            opacity: 1;
         }
 
         .word-block:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
+            background: linear-gradient(45deg, #1a5ac8, #520ea8); /* Darker on hover */
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(37,117,252,0.4);
         }
 
         .word-block.dragging {
-            opacity: 0.5;
+            opacity: 0.6;
+            transform: scale(0.9);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
         }
 
         .word-block.used {
-            background: #28a745;
+            background: linear-gradient(45deg, #28a745, #218838); /* Green for used */
             cursor: default;
+            box-shadow: 0 6px 12px rgba(40,167,69,0.3);
+            opacity: 0.9;
+        }
+        .word-block.used:hover {
+            background: linear-gradient(45deg, #28a745, #218838);
+            transform: translateY(0);
+            box-shadow: 0 6px 12px rgba(40,167,69,0.3);
         }
 
+        /* Text Inputs */
         .text-input {
             width: 100%;
-            padding: 15px;
+            padding: 18px; /* Larger padding */
             border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            margin: 10px 0;
-            transition: border-color 0.3s ease;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            margin: 12px 0;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #fcfcfc;
         }
 
         .text-input:focus {
             outline: none;
-            border-color: #007bff;
+            border-color: #2575fc; /* Accent color focus */
+            box-shadow: 0 0 0 4px rgba(37,117,252,0.2);
         }
 
         .input-group {
-            margin: 15px 0;
+            margin: 20px 0;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
             color: #555;
+            font-size: 1.05rem;
         }
 
         .inline-input {
             display: inline-block;
-            width: 120px;
-            padding: 8px 12px;
-            margin: 0 5px;
+            width: 130px; /* Slightly wider */
+            padding: 10px 15px;
+            margin: 0 8px; /* More margin */
             border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #fcfcfc;
+        }
+
+        .inline-input:focus {
+            outline: none;
+            border-color: #2575fc;
+            box-shadow: 0 0 0 3px rgba(37,117,252,0.2);
         }
 
         .sentence-building {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+            background: #fdfefe;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.06);
         }
 
+        /* Buttons */
         .buttons {
             display: flex;
-            gap: 15px;
-            margin-top: 30px;
+            gap: 20px;
+            margin-top: 40px;
             justify-content: space-between;
+            padding: 0 40px 40px;
         }
 
         .btn {
-            padding: 15px 30px;
+            padding: 18px 35px;
             border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            flex-grow: 1;
+            max-width: 220px;
+            position: relative; /* For glitter */
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+            opacity: 0;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            width: 200%;
+            height: 200%;
+            opacity: 1;
         }
 
         .btn-primary {
-            background: #007bff;
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #0056b3;
+            background: linear-gradient(45deg, #1a5ac8, #520ea8);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(37,117,252,0.4);
+        }
+
+        .btn-primary:active {
             transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(37,117,252,0.3);
         }
 
         .btn-secondary {
-            background: #6c757d;
+            background: linear-gradient(45deg, #7f8c8d, #34495e);
             color: white;
         }
 
         .btn-secondary:hover {
-            background: #545b62;
+            background: linear-gradient(45deg, #6c757d, #2c3e50);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(127,140,141,0.4);
         }
 
+        .btn-secondary:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(127,140,141,0.3);
+        }
+
+        /* Feedback */
         .feedback {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
             display: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            animation: fadeIn 0.6s ease-out;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
         .feedback.correct {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #e6ffe6; /* Lighter green */
+            color: #1a732e; /* Darker green text */
+            border: 1px solid #a8d9a8;
         }
 
         .feedback.incorrect {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #ffe6e6; /* Lighter red */
+            color: #b33939; /* Darker red text */
+            border: 1px solid #d9a8a8;
         }
 
+        /* Completion Screen */
         .completion-screen {
             text-align: center;
-            padding: 40px;
+            padding: 50px;
             display: none;
+            animation: fadeIn 0.8s ease-out forwards;
+            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            position: relative; /* For confetti */
+            overflow: hidden; /* For confetti */
         }
 
         .completion-screen.active {
@@ -250,84 +465,129 @@
         }
 
         .completion-screen h2 {
-            font-size: 2.5rem;
+            font-size: 3.5rem; /* Larger heading */
+            margin-bottom: 25px;
+            animation: popIn 0.8s ease-out forwards;
+            font-weight: 800;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .completion-screen h2.congrats {
             color: #28a745;
-            margin-bottom: 20px;
+        }
+
+        .completion-screen h2.keep-practicing {
+            color: #dc3545;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
         }
 
         .score {
-            font-size: 1.5rem;
+            font-size: 2rem;
             color: #555;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
+            font-weight: bold;
+        }
+
+        .score-message {
+            color: #666;
+            font-size: 1.15rem;
+            margin-bottom: 40px;
+            line-height: 1.7;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .spaced-review {
             background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border-left: 5px solid #e17055;
+            padding: 25px;
+            border-radius: 18px;
+            margin: 25px 0;
+            border-left: 6px solid #e17055;
+            box-shadow: 0 8px 20px rgba(253,203,110,0.35);
+            animation: slideInLeft 0.7s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         .spaced-review h4 {
             color: #2d3436;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
         }
 
         .spaced-review p {
             color: #636e72;
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         /* Speaking Interface Styles */
         .speaking-interface {
             background: linear-gradient(135deg, #74b9ff, #0984e3);
             color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin: 20px 0;
+            padding: 35px;
+            border-radius: 18px;
+            margin: 25px 0;
             text-align: center;
+            box-shadow: 0 12px 30px rgba(9,132,227,0.4);
         }
 
         .sentence-to-read {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .target-sentence {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: bold;
-            background: rgba(255,255,255,0.2);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
+            background: rgba(255,255,255,0.25);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px auto;
+            max-width: 90%;
             backdrop-filter: blur(10px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
 
         .pronunciation-guide {
-            opacity: 0.9;
+            opacity: 0.95;
             font-style: italic;
+            margin-top: 15px;
+            font-size: 1.05rem;
         }
 
         .recording-controls {
-            margin: 25px 0;
+            margin: 30px 0;
         }
 
         .record-btn {
-            background: #ff6b6b;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
             border: none;
-            padding: 20px 40px;
+            padding: 22px 45px;
             border-radius: 50px;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(255,107,107,0.3);
+            box-shadow: 0 10px 25px rgba(255,107,107,0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
         }
 
         .record-btn:hover {
-            background: #ee5a24;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(255,107,107,0.4);
+            background: linear-gradient(45deg, #ee5a24, #d63031);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(255,107,107,0.5);
         }
 
         .record-btn.recording {
@@ -342,8 +602,8 @@
         }
 
         .recording-status {
-            margin-top: 15px;
-            font-size: 1rem;
+            margin-top: 18px;
+            font-size: 1.1rem;
             font-weight: 500;
         }
 
@@ -351,9 +611,9 @@
             display: none;
             justify-content: center;
             align-items: flex-end;
-            gap: 4px;
-            height: 60px;
-            margin: 20px 0;
+            gap: 8px;
+            height: 70px; /* Taller visualizer */
+            margin: 25px 0;
         }
 
         .audio-visualizer.active {
@@ -361,51 +621,54 @@
         }
 
         .wave-bar {
-            width: 8px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 4px;
+            width: 12px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 6px;
             animation: wave 1.2s ease-in-out infinite;
         }
 
-        .wave-bar:nth-child(1) { height: 20px; animation-delay: 0s; }
-        .wave-bar:nth-child(2) { height: 35px; animation-delay: 0.1s; }
-        .wave-bar:nth-child(3) { height: 50px; animation-delay: 0.2s; }
-        .wave-bar:nth-child(4) { height: 40px; animation-delay: 0.3s; }
-        .wave-bar:nth-child(5) { height: 25px; animation-delay: 0.4s; }
-        .wave-bar:nth-child(6) { height: 15px; animation-delay: 0.5s; }
+        .wave-bar:nth-child(1) { height: 30px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 45px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 60px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 50px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 35px; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 25px; animation-delay: 0.5s; }
 
         @keyframes wave {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.5); opacity: 0.8; }
+            0%, 100% { transform: scaleY(1); opacity: 1; }
+            50% { transform: scaleY(1.4); opacity: 0.8; }
         }
 
         .pronunciation-feedback {
             background: white;
             color: #2c3e50;
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 18px;
+            margin-top: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
 
         .feedback-header h4 {
             color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+            font-weight: 700;
         }
 
         .accuracy-score {
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
+            gap: 25px;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
             border-bottom: 1px solid #eee;
         }
 
         .score-circle {
-            width: 80px;
-            height: 80px;
+            width: 100px; /* Even larger circle */
+            height: 100px;
             border-radius: 50%;
             background: linear-gradient(135deg, #00b894, #00a085);
             display: flex;
@@ -414,68 +677,147 @@
             justify-content: center;
             color: white;
             font-weight: bold;
+            box-shadow: 0 6px 20px rgba(0,184,148,0.4);
+            animation: scaleIn 0.7s ease-out;
+        }
+
+        .score-circle.good {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+        .score-circle.bad {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.6); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .score-number {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
             line-height: 1;
         }
 
         .score-label {
-            font-size: 0.9rem;
+            font-size: 1.1rem;
         }
 
         .score-details {
             flex: 1;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
+            line-height: 1.6;
         }
 
         .detailed-feedback {
-            space-y: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .feedback-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            gap: 18px;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            transition: transform 0.2s ease;
+        }
+
+        .feedback-item:hover {
+            transform: translateY(-3px);
         }
 
         .feedback-item.good {
-            background: #d4f6d4;
+            background: #e6ffe6;
+            color: #1a732e;
         }
 
         .feedback-item.improve {
-            background: #fff3cd;
+            background: #fff8e6; /* Lighter yellow */
+            color: #856404;
         }
 
         .feedback-icon {
-            font-size: 1.2rem;
+            font-size: 1.8rem;
         }
 
         .feedback-text {
             flex: 1;
+            font-size: 1.05rem;
         }
 
         .play-example {
-            background: #007bff;
+            background: linear-gradient(45deg, #2575fc, #6a11cb);
             color: white;
             border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 8px 15px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 6px rgba(37,117,252,0.2);
         }
 
         .play-example:hover {
-            background: #0056b3;
+            background: linear-gradient(45deg, #1a5ac8, #520ea8);
+            box-shadow: 0 4px 8px rgba(37,117,252,0.3);
+            transform: translateY(-1px);
+        }
+
+        .video-container {
+            margin-top: 45px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 18px;
+        }
+
+        /* Confetti styles */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00; /* Will be randomized */
+            opacity: 0;
+            animation: confetti-fall 3s forwards ease-out;
+            border-radius: 50%; /* For circles */
+            z-index: 99;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) rotate(var(--rot));
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="quiz-container">
+    <div class="greeting-overlay" id="greetingOverlay">
+        <div class="greeting-text">Hi Max!</div>
+        <div class="greeting-subtext">Let's master German present tense.</div>
+    </div>
+
+    <div class="quiz-container" id="quizContainer">
         <div class="quiz-header">
             <h1>🇩🇪 Present Tense Mastery</h1>
             <p>Interactive conjugation practice with instant feedback</p>
@@ -539,7 +881,7 @@
                 <div class="question-text">
                     Complete the email by filling in the correct verb endings:
                 </div>
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; font-family: 'Courier New', monospace; line-height: 1.8;">
+                <div style="background: #fdfefe; padding: 25px; border-radius: 15px; font-family: 'Courier New', monospace; line-height: 1.8; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);">
                     <strong>Liebe Anna,</strong><br><br>
                     ich freu<input type="text" class="inline-input" id="freuen" placeholder="__"> (freuen) mich sehr!<br>
                     Ich komm<input type="text" class="inline-input" id="kommen" placeholder="__"> (kommen) gerne!<br>
@@ -616,12 +958,15 @@
 
             <!-- Completion Screen -->
             <div class="completion-screen" id="completion">
-                <h2>🎉 Ausgezeichnet!</h2>
-                <div class="score">You scored <span id="finalScore">0</span>/3</div>
-                <p style="color: #666; font-size: 1.1rem;">
-                    <strong>Specific Feedback:</strong> You've mastered basic present tense conjugation! 
-                    Your understanding of verb endings with different pronouns is solid.
-                </p>
+                <h2 id="completionHeading"></h2>
+                <div class="score">You scored <span id="finalScore">0</span>/<span id="maxScore">3</span></div>
+                <p class="score-message" id="scoreMessage"></p>
+                <div class="video-container">
+                    <video id="completionVideo" width="640" height="360" controls loop muted playsinline>
+                        <source src="finished.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
                 <button class="btn btn-primary" onclick="location.reload()">Try Again</button>
             </div>
         </div>
@@ -635,9 +980,116 @@
     <script>
         let currentQuestion = 1;
         let score = 0;
+        const totalGradedQuestions = 3; 
         const totalQuestions = 4;
+
         let draggedElement = null;
         let isRecording = false;
+
+        // Tone.js Synths for sound alerts
+        const passSynth = new Tone.Synth().toDestination();
+        const failSynth = new Tone.MembraneSynth().toDestination();
+
+        // Glitter effect for buttons
+        function createGlitter(event) {
+            const button = event.currentTarget;
+            const rect = button.getBoundingClientRect();
+            const numParticles = 10;
+            const colors = ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F', '#FF4500']; // Gold, HotPink, Cyan, GreenYellow, OrangeRed
+
+            for (let i = 0; i < numParticles; i++) {
+                const glitter = document.createElement('div');
+                glitter.classList.add('glitter-particle');
+                glitter.style.position = 'absolute';
+                glitter.style.width = `${Math.random() * 5 + 3}px`;
+                glitter.style.height = glitter.style.width;
+                glitter.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                glitter.style.borderRadius = '50%';
+                glitter.style.pointerEvents = 'none';
+                glitter.style.left = `${event.clientX - rect.left}px`;
+                glitter.style.top = `${event.clientY - rect.top}px`;
+                glitter.style.opacity = 1;
+                glitter.style.transform = 'scale(1)';
+                glitter.style.transition = 'transform 0.8s ease-out, opacity 0.8s ease-out';
+                glitter.style.zIndex = 2; // Above button content
+
+                button.appendChild(glitter);
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 50 + 20;
+                const translateX = Math.cos(angle) * distance;
+                const translateY = Math.sin(angle) * distance;
+
+                requestAnimationFrame(() => {
+                    glitter.style.transform = `translate(${translateX}px, ${translateY}px) scale(0)`;
+                    glitter.style.opacity = 0;
+                });
+
+                glitter.addEventListener('transitionend', () => {
+                    glitter.remove();
+                });
+            }
+        }
+
+        // Confetti effect for completion screen
+        function createConfetti() {
+            const completionScreen = document.getElementById('completion');
+            const numConfetti = 100;
+            const colors = ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F', '#FF4500', '#8A2BE2', '#00BFFF']; // More colors
+
+            for (let i = 0; i < numConfetti; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                const size = Math.random() * 10 + 5; // Size between 5px and 15px
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                
+                // Start from random point at the top of the screen
+                const startX = Math.random() * completionScreen.offsetWidth;
+                const startY = -20; // Start slightly above the screen
+                confetti.style.left = `${startX}px`;
+                confetti.style.top = `${startY}px`;
+
+                // Random end position (x, y) and rotation
+                const endX = (Math.random() - 0.5) * completionScreen.offsetWidth * 1.5; // Wider spread
+                const endY = completionScreen.offsetHeight + 50; // Fall below screen
+                const rotation = Math.random() * 720 - 360; // -360 to 360 degrees
+
+                confetti.style.setProperty('--x', `${endX}px`);
+                confetti.style.setProperty('--y', `${endY}px`);
+                confetti.style.setProperty('--rot', `${rotation}deg`);
+                
+                // Randomize animation duration and delay
+                confetti.style.animationDuration = `${Math.random() * 2 + 2}s`; // 2 to 4 seconds
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`; // 0 to 0.5 seconds delay
+
+                completionScreen.appendChild(confetti);
+
+                // Remove confetti after animation to prevent DOM bloat
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                });
+            }
+        }
+
+
+        // Initial Greeting Overlay Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const greetingOverlay = document.getElementById('greetingOverlay');
+            setTimeout(() => {
+                greetingOverlay.classList.add('hidden');
+            }, 2500); // Show for 2.5 seconds
+
+            // Add glitter event listeners to buttons
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', createGlitter);
+            });
+            document.querySelectorAll('.word-block').forEach(block => {
+                block.addEventListener('click', createGlitter); // Also add to word blocks
+            });
+        });
 
         // Drag and Drop functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -648,6 +1100,7 @@
                 block.addEventListener('dragstart', function(e) {
                     draggedElement = this;
                     this.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', this.textContent);
                 });
 
                 block.addEventListener('dragend', function(e) {
@@ -669,9 +1122,9 @@
                 this.classList.remove('drag-over');
                 
                 if (draggedElement) {
-                    // Clear placeholder text
-                    if (this.children.length === 1 && this.children[0].tagName === 'SPAN') {
-                        this.innerHTML = '';
+                    const placeholderSpan = this.querySelector('span');
+                    if (placeholderSpan) {
+                        placeholderSpan.remove();
                     }
                     
                     this.appendChild(draggedElement);
@@ -687,13 +1140,15 @@
         }
 
         function showQuestion(questionNum) {
-            // Hide all questions
             document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
             
-            // Show current question
-            document.getElementById('q' + questionNum).classList.add('active');
+            const currentQElement = document.getElementById('q' + questionNum);
+            if (currentQElement) {
+                currentQElement.classList.add('active');
+            }
             
-            // Update button states
+            document.querySelectorAll('.feedback').forEach(f => f.style.display = 'none');
+            
             document.getElementById('prevBtn').style.display = questionNum === 1 ? 'none' : 'block';
             
             if (questionNum === totalQuestions) {
@@ -710,9 +1165,8 @@
             let isCorrect = false;
 
             if (currentQuestion === 1) {
-                // Check sentence building
                 const dragZone = document.getElementById('dragZone1');
-                const words = Array.from(dragZone.children).map(child => child.textContent);
+                const words = Array.from(dragZone.children).map(child => child.textContent.trim());
                 const correctOrder = ['Ich', 'gehe', 'gern', 'ins', 'Kino'];
                 
                 isCorrect = JSON.stringify(words) === JSON.stringify(correctOrder);
@@ -726,7 +1180,6 @@
                     feedback.textContent = 'Not quite right. The correct order is: Ich gehe gern ins Kino. (I go to the cinema gladly)';
                 }
             } else if (currentQuestion === 2) {
-                // Check conjugations
                 const ichVal = document.getElementById('ich-input').value.toLowerCase().trim();
                 const duVal = document.getElementById('du-input').value.toLowerCase().trim();
                 const erVal = document.getElementById('er-input').value.toLowerCase().trim();
@@ -742,7 +1195,6 @@
                     feedback.textContent = 'Try again! Remember: ich suche, du suchst, er/sie/es sucht. Regular verbs follow this pattern.';
                 }
             } else if (currentQuestion === 3) {
-                // Check email completion
                 const freuen = document.getElementById('freuen').value.toLowerCase().trim();
                 const kommen = document.getElementById('kommen').value.toLowerCase().trim();
                 const lernen = document.getElementById('lernen').value.toLowerCase().trim();
@@ -759,13 +1211,11 @@
                     feedback.textContent = 'Check your endings: ich freue (-e), ich komme (-e), Max lernt (-t), wir spielen (-en).';
                 }
             } else if (currentQuestion === 4) {
-                // Speaking practice - always show positive feedback for demo
                 const pronunciationFeedback = document.getElementById('pronunciationFeedback');
                 pronunciationFeedback.style.display = 'block';
                 
                 feedback.className = 'feedback correct';
                 feedback.textContent = 'Excellent speaking practice! Your pronunciation analysis is complete above.';
-                score++; // Give credit for attempting speaking
                 isCorrect = true;
             }
 
@@ -781,16 +1231,60 @@
                 document.getElementById('nextBtn').onclick = checkAnswer;
                 document.getElementById('nextBtn').textContent = 'Check Answer';
             } else {
-                // Show completion screen
                 document.getElementById('quizButtons').style.display = 'none';
+                document.getElementById('quizContainer').classList.add('fade-out');
+
                 document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
-                document.getElementById('completion').classList.add('active');
-                document.getElementById('finalScore').textContent = score;
+                const completionScreen = document.getElementById('completion');
+                completionScreen.classList.add('active');
+                
+                const finalScoreElement = document.getElementById('finalScore');
+                const maxScoreElement = document.getElementById('maxScore');
+                const completionHeading = document.getElementById('completionHeading');
+                const scoreMessage = document.getElementById('scoreMessage');
+                const completionVideo = document.getElementById('completionVideo');
+
+                finalScoreElement.textContent = score;
+                maxScoreElement.textContent = totalGradedQuestions;
+
+                const requiredScore = Math.ceil(totalGradedQuestions * (2/3));
+                
+                if (score >= requiredScore) {
+                    completionHeading.textContent = '🎉 Ausgezeichnet!';
+                    completionHeading.classList.add('congrats');
+                    completionHeading.classList.remove('keep-practicing');
+                    scoreMessage.textContent = `You've demonstrated a strong grasp of German present tense! Your understanding of verb endings and sentence structure is impressive.`;
+                    
+                    createConfetti(); // Trigger confetti
+                    passSynth.triggerAttackRelease("C5", "8n"); // Play a success sound
+
+                    if (completionVideo) {
+                        completionVideo.play().catch(error => {
+                            console.log("Autoplay prevented:", error);
+                        });
+                    }
+                } else {
+                    completionHeading.textContent = 'Keep Practicing!';
+                    completionHeading.classList.add('keep-practicing');
+                    completionHeading.classList.remove('congrats');
+                    scoreMessage.textContent = `You're making progress! Review the conjugation rules and try again to solidify your understanding.`;
+                    
+                    failSynth.triggerAttackRelease("C2", "8n"); // Play a failure sound
+                    
+                    if (completionVideo) {
+                        completionVideo.pause();
+                        completionVideo.currentTime = 0;
+                    }
+                }
+
                 document.getElementById('progressFill').style.width = '100%';
+
+                setTimeout(() => {
+                    document.getElementById('quizContainer').classList.remove('fade-out');
+                }, 800); 
             }
         }
 
-        // Speaking Interface Functions
         function toggleRecording() {
             const recordBtn = document.getElementById('recordBtn');
             const recordingStatus = document.getElementById('recordingStatus');
@@ -799,7 +1293,6 @@
             const recordText = recordBtn.querySelector('.record-text');
 
             if (!isRecording) {
-                // Start recording
                 isRecording = true;
                 recordBtn.classList.add('recording');
                 recordIcon.textContent = '⏹️';
@@ -807,7 +1300,6 @@
                 recordingStatus.textContent = 'Listening for: "Ich gehe morgen ins Theater."';
                 audioVisualizer.classList.add('active');
                 
-                // Simulate recording completion after 3 seconds
                 setTimeout(() => {
                     if (isRecording) {
                         stopRecording();
@@ -833,19 +1325,17 @@
             recordingStatus.textContent = 'Processing your pronunciation...';
             audioVisualizer.classList.remove('active');
 
-            // Simulate processing and show results
             setTimeout(() => {
                 recordingStatus.textContent = 'Analysis complete! See feedback below.';
                 document.getElementById('pronunciationFeedback').style.display = 'block';
                 
-                // Enable the next button
-                document.getElementById('nextBtn').textContent = 'Check Answer';
+                document.getElementById('nextBtn').textContent = 'Next Question';
+                document.getElementById('nextBtn').onclick = nextQuestion;
             }, 1500);
         }
 
         function playExample() {
-            // Demo function - would play audio pronunciation
-            alert('🔊 Audio example would play here:\n"ich" with soft "ch" sound');
+            alert('🔊 Audio example would play here for the soft "ch" sound in "ich".');
         }
 
         function previousQuestion() {
