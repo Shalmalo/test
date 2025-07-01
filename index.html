@@ -16,7 +16,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%); /* Softer, more inviting gradient */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Reverted to original blue-purple gradient */
             min-height: 100vh;
             padding: 20px;
             display: flex;
@@ -26,11 +26,11 @@
         }
 
         .quiz-container {
-            max-width: 850px; /* Slightly wider */
+            max-width: 850px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.98); /* Near-white with slight transparency */
-            border-radius: 25px; /* More rounded */
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25); /* Deeper shadow */
+            background: #FFFFFF; /* Pure white, clean background */
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
             overflow: hidden;
             transform: scale(1);
             transition: transform 0.4s ease-out, opacity 0.4s ease-out;
@@ -42,58 +42,9 @@
             opacity: 0.7;
         }
 
-        /* Initial Greeting Overlay */
-        .greeting-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: white;
-            font-size: 3rem;
-            font-weight: 800;
-            z-index: 100;
-            opacity: 1;
-            transition: opacity 1s ease-out, transform 1s ease-out;
-            border-radius: 25px; /* Match container radius */
-        }
-
-        .greeting-overlay.hidden {
-            opacity: 0;
-            transform: translateY(-100%);
-            pointer-events: none;
-        }
-
-        .greeting-text {
-            transform: scale(0.8);
-            opacity: 0;
-            animation: popInGreeting 1s forwards cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            animation-delay: 0.5s;
-        }
-
-        .greeting-subtext {
-            font-size: 1.2rem;
-            font-weight: 400;
-            margin-top: 15px;
-            opacity: 0;
-            animation: fadeIn 0.8s forwards;
-            animation-delay: 1.5s;
-        }
-
-        @keyframes popInGreeting {
-            0% { transform: scale(0.8); opacity: 0; }
-            70% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
         /* Quiz Header */
         .quiz-header {
-            background: linear-gradient(135deg, #ff8a00, #e52e71); /* Warm, vibrant gradient */
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); /* Reverted to original warm gradient */
             color: white;
             padding: 35px;
             text-align: center;
@@ -119,7 +70,7 @@
             margin-bottom: 12px;
             position: relative;
             z-index: 1;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
         }
 
         .quiz-header p {
@@ -130,8 +81,8 @@
         }
 
         .progress-bar {
-            height: 8px; /* Thicker progress bar */
-            background: rgba(255,255,255,0.3);
+            height: 8px;
+            background: rgba(255,255,255,0.3); /* Translucent progress bar */
             border-radius: 4px;
             margin-top: 25px;
             overflow: hidden;
@@ -169,7 +120,7 @@
 
         .question h3 {
             font-size: 2rem;
-            color: #2c3e50;
+            color: #333;
             margin-bottom: 30px;
             text-align: center;
             position: relative;
@@ -184,13 +135,13 @@
             transform: translateX(-50%);
             width: 80px;
             height: 4px;
-            background: #ff8a00; /* Match header accent */
+            background: #ff6b6b; /* Matches header accent */
             border-radius: 2px;
         }
 
         .question-text {
             font-size: 1.2rem;
-            color: #444;
+            color: #555;
             margin-bottom: 30px;
             line-height: 1.7;
             text-align: center;
@@ -201,24 +152,24 @@
 
         /* Drag and Drop */
         .drag-zone {
-            min-height: 80px; /* Taller drag zone */
-            border: 3px dashed #b0c4de; /* Softer dashed border */
+            min-height: 80px;
+            border: 2px dashed #B0C4DE; /* Softer dashed border */
             border-radius: 15px;
             padding: 20px;
             margin: 20px 0;
-            background: #fdfefe; /* Very light background */
+            background: #F8F9FA; /* Very light grey */
             display: flex;
             align-items: center;
-            gap: 15px; /* More space between words */
+            gap: 15px;
             flex-wrap: wrap;
             transition: all 0.3s ease;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.08);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .drag-zone.drag-over {
-            border-color: #6a11cb; /* Accent color on drag over */
-            background: #e6eafc; /* Lighter accent background */
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1), 0 0 15px rgba(106,17,203,0.3);
+            border-color: #007BFF; /* Accent color on drag over */
+            background: #E3F2FD; /* Lighter accent background */
+            box-shadow: inset 0 1px 5px rgba(0,0,0,0.1), 0 0 10px rgba(0,123,255,0.2);
         }
 
         .word-options {
@@ -230,19 +181,19 @@
         }
 
         .word-block {
-            background: linear-gradient(45deg, #2575fc, #6a11cb); /* Blue-purple gradient */
+            background: linear-gradient(45deg, #2575fc, #6a11cb); /* Reverted to blue-purple gradient */
             color: white;
             padding: 14px 25px;
-            border-radius: 30px; /* More pill-like */
+            border-radius: 30px;
             cursor: grab;
             user-select: none;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             font-weight: 600;
             font-size: 1.1rem;
-            box-shadow: 0 6px 12px rgba(37,117,252,0.3);
+            box-shadow: 0 4px 8px rgba(37,117,252,0.2);
             position: relative;
             overflow: hidden;
-            z-index: 1; /* For glitter effect */
+            z-index: 1;
         }
 
         .word-block::before {
@@ -268,7 +219,7 @@
         .word-block:hover {
             background: linear-gradient(45deg, #1a5ac8, #520ea8); /* Darker on hover */
             transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(37,117,252,0.4);
+            box-shadow: 0 6px 12px rgba(37,117,252,0.3);
         }
 
         .word-block.dragging {
@@ -278,33 +229,34 @@
         }
 
         .word-block.used {
-            background: linear-gradient(45deg, #28a745, #218838); /* Green for used */
+            background: linear-gradient(45deg, #28A745, #1E7E34); /* Classic green for used */
             cursor: default;
-            box-shadow: 0 6px 12px rgba(40,167,69,0.3);
+            box-shadow: 0 4px 8px rgba(40,167,69,0.2);
             opacity: 0.9;
         }
         .word-block.used:hover {
-            background: linear-gradient(45deg, #28a745, #218838);
+            background: linear-gradient(45deg, #28A745, #1E7E34);
             transform: translateY(0);
-            box-shadow: 0 6px 12px rgba(40,167,69,0.3);
+            box-shadow: 0 4px 8px rgba(40,167,69,0.2);
         }
 
         /* Text Inputs */
         .text-input {
             width: 100%;
-            padding: 18px; /* Larger padding */
-            border: 2px solid #ddd;
+            padding: 18px;
+            border: 1px solid #DDDDDD; /* Softer border */
             border-radius: 12px;
             font-size: 1.15rem;
             margin: 12px 0;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            background-color: #fcfcfc;
+            background-color: #FFFFFF;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .text-input:focus {
             outline: none;
-            border-color: #2575fc; /* Accent color focus */
-            box-shadow: 0 0 0 4px rgba(37,117,252,0.2);
+            border-color: #007BFF; /* Accent color focus */
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
         }
 
         .input-group {
@@ -321,28 +273,29 @@
 
         .inline-input {
             display: inline-block;
-            width: 130px; /* Slightly wider */
+            width: 130px;
             padding: 10px 15px;
-            margin: 0 8px; /* More margin */
-            border: 2px solid #ddd;
+            margin: 0 8px;
+            border: 1px solid #DDDDDD;
             border-radius: 8px;
             font-size: 1.05rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            background-color: #fcfcfc;
+            background-color: #FFFFFF;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .inline-input:focus {
             outline: none;
-            border-color: #2575fc;
-            box-shadow: 0 0 0 3px rgba(37,117,252,0.2);
+            border-color: #007BFF;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
         }
 
         .sentence-building {
-            background: #fdfefe;
+            background: #F8F9FA; /* Very light grey */
             padding: 25px;
             border-radius: 15px;
             margin: 25px 0;
-            box-shadow: inset 0 0 12px rgba(0,0,0,0.06);
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
         }
 
         /* Buttons */
@@ -365,7 +318,7 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
             flex-grow: 1;
             max-width: 220px;
-            position: relative; /* For glitter */
+            position: relative;
             overflow: hidden;
             z-index: 1;
         }
@@ -392,12 +345,12 @@
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
+            background: linear-gradient(45deg, #2575fc, #6a11cb); /* Reverted to blue-purple gradient */
             color: white;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(45deg, #1a5ac8, #520ea8);
+            background: linear-gradient(45deg, #1a5ac8, #520ea8); /* Darker on hover */
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(37,117,252,0.4);
         }
@@ -408,19 +361,19 @@
         }
 
         .btn-secondary {
-            background: linear-gradient(45deg, #7f8c8d, #34495e);
+            background: linear-gradient(45deg, #6C757D, #545B62); /* Reverted to classic grey */
             color: white;
         }
 
         .btn-secondary:hover {
-            background: linear-gradient(45deg, #6c757d, #2c3e50);
+            background: linear-gradient(45deg, #545B62, #3A4045);
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(127,140,141,0.4);
+            box-shadow: 0 10px 20px rgba(108,117,125,0.4);
         }
 
         .btn-secondary:active {
             transform: translateY(-2px);
-            box-shadow: 0 5px 10px rgba(127,140,141,0.3);
+            box-shadow: 0 5px 10px rgba(108,117,125,0.3);
         }
 
         /* Feedback */
@@ -433,18 +386,20 @@
             font-weight: 500;
             animation: fadeIn 0.6s ease-out;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            background: #FFFFFF;
+            border: 1px solid #DDDDDD;
         }
 
         .feedback.correct {
-            background: #e6ffe6; /* Lighter green */
-            color: #1a732e; /* Darker green text */
-            border: 1px solid #a8d9a8;
+            background: #D4EDDA; /* Light green */
+            color: #155724;
+            border-color: #C3E6CB;
         }
 
         .feedback.incorrect {
-            background: #ffe6e6; /* Lighter red */
-            color: #b33939; /* Darker red text */
-            border: 1px solid #d9a8a8;
+            background: #F8D7DA; /* Light red */
+            color: #721C24;
+            border-color: #F5C6CB;
         }
 
         /* Completion Screen */
@@ -453,11 +408,11 @@
             padding: 50px;
             display: none;
             animation: fadeIn 0.8s ease-out forwards;
-            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+            background: #FFFFFF;
             border-bottom-left-radius: 25px;
             border-bottom-right-radius: 25px;
-            position: relative; /* For confetti */
-            overflow: hidden; /* For confetti */
+            position: relative;
+            overflow: hidden;
         }
 
         .completion-screen.active {
@@ -465,19 +420,19 @@
         }
 
         .completion-screen h2 {
-            font-size: 3.5rem; /* Larger heading */
+            font-size: 3.5rem;
             margin-bottom: 25px;
             animation: popIn 0.8s ease-out forwards;
             font-weight: 800;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
         }
         
         .completion-screen h2.congrats {
-            color: #28a745;
+            color: #28A745;
         }
 
         .completion-screen h2.keep-practicing {
-            color: #dc3545;
+            color: #DC3545;
         }
 
         @keyframes popIn {
@@ -504,12 +459,12 @@
         }
 
         .spaced-review {
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            background: linear-gradient(135deg, #FFF3CD, #FEEB99); /* Light yellow gradient */
             padding: 25px;
             border-radius: 18px;
             margin: 25px 0;
-            border-left: 6px solid #e17055;
-            box-shadow: 0 8px 20px rgba(253,203,110,0.35);
+            border-left: 6px solid #E17055; /* Warm accent color */
+            box-shadow: 0 5px 15px rgba(253,203,110,0.3);
             animation: slideInLeft 0.7s ease-out;
         }
 
@@ -519,26 +474,25 @@
         }
 
         .spaced-review h4 {
-            color: #2d3436;
+            color: #2D3436;
             margin-bottom: 12px;
             font-size: 1.3rem;
             font-weight: 700;
         }
 
         .spaced-review p {
-            color: #636e72;
+            color: #636E72;
             font-size: 1rem;
         }
 
         /* Speaking Interface Styles */
         .speaking-interface {
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            background: linear-gradient(135deg, #74B9FF, #0984E3); /* Reverted to original blue gradient */
             color: white;
             padding: 35px;
             border-radius: 18px;
             margin: 25px 0;
-            text-align: center;
-            box-shadow: 0 12px 30px rgba(9,132,227,0.4);
+            box-shadow: 0 8px 20px rgba(9,132,227,0.3);
         }
 
         .sentence-to-read {
@@ -548,13 +502,12 @@
         .target-sentence {
             font-size: 2.2rem;
             font-weight: bold;
-            background: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.2); /* Subtle translucent background */
             padding: 25px;
             border-radius: 12px;
             margin: 20px auto;
             max-width: 90%;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .pronunciation-guide {
@@ -569,7 +522,7 @@
         }
 
         .record-btn {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            background: linear-gradient(45deg, #FF6B6B, #EE5A24); /* Reverted to original red gradient */
             color: white;
             border: none;
             padding: 22px 45px;
@@ -577,7 +530,7 @@
             font-size: 1.3rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(255,107,107,0.4);
+            box-shadow: 0 8px 20px rgba(255,107,107,0.3);
             display: inline-flex;
             align-items: center;
             gap: 12px;
@@ -585,13 +538,13 @@
         }
 
         .record-btn:hover {
-            background: linear-gradient(45deg, #ee5a24, #d63031);
+            background: linear-gradient(45deg, #EE5A24, #D63031);
             transform: translateY(-4px);
-            box-shadow: 0 15px 30px rgba(255,107,107,0.5);
+            box-shadow: 0 12px 25px rgba(255,107,107,0.4);
         }
 
         .record-btn.recording {
-            background: #d63031;
+            background: #D63031;
             animation: pulse 1.5s infinite;
         }
 
@@ -612,7 +565,7 @@
             justify-content: center;
             align-items: flex-end;
             gap: 8px;
-            height: 70px; /* Taller visualizer */
+            height: 70px;
             margin: 25px 0;
         }
 
@@ -640,19 +593,19 @@
         }
 
         .pronunciation-feedback {
-            background: white;
-            color: #2c3e50;
+            background: #FFFFFF; /* Solid white background */
+            color: #2C3E50;
             padding: 30px;
             border-radius: 18px;
             margin-top: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
         .feedback-header h4 {
-            color: #2c3e50;
+            color: #2C3E50;
             margin-bottom: 20px;
             font-size: 1.4rem;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #EEE;
             padding-bottom: 12px;
             font-weight: 700;
         }
@@ -663,29 +616,29 @@
             gap: 25px;
             margin-bottom: 25px;
             padding-bottom: 25px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #EEE;
         }
 
         .score-circle {
-            width: 100px; /* Even larger circle */
+            width: 100px;
             height: 100px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #00b894, #00a085);
+            background: linear-gradient(135deg, #00B894, #00A085); /* Green gradient */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            box-shadow: 0 6px 20px rgba(0,184,148,0.4);
+            box-shadow: 0 6px 20px rgba(0,184,148,0.3);
             animation: scaleIn 0.7s ease-out;
         }
 
         .score-circle.good {
-            background: linear-gradient(135deg, #00b894, #00a085);
+            background: linear-gradient(135deg, #00B894, #00A085);
         }
         .score-circle.bad {
-            background: linear-gradient(135deg, #dc3545, #c82333);
+            background: linear-gradient(135deg, #DC3545, #C82333); /* Red gradient */
         }
 
         @keyframes scaleIn {
@@ -729,12 +682,12 @@
         }
 
         .feedback-item.good {
-            background: #e6ffe6;
-            color: #1a732e;
+            background: #D4EDDA;
+            color: #155724;
         }
 
         .feedback-item.improve {
-            background: #fff8e6; /* Lighter yellow */
+            background: #FFF3CD; /* Light yellow */
             color: #856404;
         }
 
@@ -748,7 +701,7 @@
         }
 
         .play-example {
-            background: linear-gradient(45deg, #2575fc, #6a11cb);
+            background: linear-gradient(45deg, #007BFF, #0056B3); /* Classic blue */
             color: white;
             border: none;
             padding: 8px 15px;
@@ -756,12 +709,12 @@
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.2s ease;
-            box-shadow: 0 3px 6px rgba(37,117,252,0.2);
+            box-shadow: 0 3px 6px rgba(0,123,255,0.2);
         }
 
         .play-example:hover {
-            background: linear-gradient(45deg, #1a5ac8, #520ea8);
-            box-shadow: 0 4px 8px rgba(37,117,252,0.3);
+            background: linear-gradient(45deg, #0056B3, #003F7F);
+            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
             transform: translateY(-1px);
         }
 
@@ -775,7 +728,7 @@
             height: 0;
             overflow: hidden;
             border-radius: 18px;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
         }
 
         .video-container video {
@@ -787,7 +740,7 @@
             border-radius: 18px;
         }
 
-        /* Confetti styles */
+        /* Confetti styles (large) */
         .confetti {
             position: absolute;
             width: 10px;
@@ -795,7 +748,7 @@
             background-color: #f00; /* Will be randomized */
             opacity: 0;
             animation: confetti-fall 3s forwards ease-out;
-            border-radius: 50%; /* For circles */
+            border-radius: 50%;
             z-index: 99;
         }
 
@@ -809,14 +762,45 @@
                 opacity: 0;
             }
         }
+
+        /* Small Confetti styles (for per-answer feedback) */
+        .confetti-small {
+            position: fixed; /* Fixed to viewport */
+            width: 6px;
+            height: 6px;
+            background-color: #f00; /* Will be randomized */
+            opacity: 0;
+            animation: confetti-small-fall 1.5s forwards ease-out;
+            border-radius: 50%;
+            z-index: 1000; /* High z-index to be on top */
+            pointer-events: none; /* Do not block clicks */
+        }
+
+        @keyframes confetti-small-fall {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y)) rotate(var(--rot)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Glitter particles for buttons */
+        .glitter-particle {
+            position: absolute;
+            background-color: #FFD700; /* Default, will be overridden */
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 1;
+            transform: scale(1);
+            transition: transform 0.8s ease-out, opacity 0.8s ease-out;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
-    <div class="greeting-overlay" id="greetingOverlay">
-        <div class="greeting-text">Hi Max!</div>
-        <div class="greeting-subtext">Let's master German present tense.</div>
-    </div>
-
     <div class="quiz-container" id="quizContainer">
         <div class="quiz-header">
             <h1>🇩🇪 Present Tense Mastery</h1>
@@ -881,7 +865,7 @@
                 <div class="question-text">
                     Complete the email by filling in the correct verb endings:
                 </div>
-                <div style="background: #fdfefe; padding: 25px; border-radius: 15px; font-family: 'Courier New', monospace; line-height: 1.8; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);">
+                <div style="background: #F8F9FA; padding: 25px; border-radius: 15px; font-family: 'Courier New', monospace; line-height: 1.8; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);">
                     <strong>Liebe Anna,</strong><br><br>
                     ich freu<input type="text" class="inline-input" id="freuen" placeholder="__"> (freuen) mich sehr!<br>
                     Ich komm<input type="text" class="inline-input" id="kommen" placeholder="__"> (kommen) gerne!<br>
@@ -962,7 +946,7 @@
                 <div class="score">You scored <span id="finalScore">0</span>/<span id="maxScore">3</span></div>
                 <p class="score-message" id="scoreMessage"></p>
                 <div class="video-container">
-                    <video id="completionVideo" width="640" height="360" controls loop muted playsinline>
+                    <video id="completionVideo" width="640" height="360" controls loop muted playsinline autoplay>
                         <source src="finished.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -989,6 +973,12 @@
         // Tone.js Synths for sound alerts
         const passSynth = new Tone.Synth().toDestination();
         const failSynth = new Tone.MembraneSynth().toDestination();
+        const navSound = new Tone.PluckSynth().toDestination(); // New synth for navigation sounds
+
+        // Helper function for robust string comparison
+        function normalizeString(str) {
+            return str.toLowerCase().trim().replace(/\s+/g, ' '); // Trim, lowercase, replace multiple spaces with single
+        }
 
         // Glitter effect for buttons
         function createGlitter(event) {
@@ -1046,48 +1036,80 @@
                 confetti.style.width = `${size}px`;
                 confetti.style.height = `${size}px`;
                 
-                // Start from random point at the top of the screen
                 const startX = Math.random() * completionScreen.offsetWidth;
-                const startY = -20; // Start slightly above the screen
+                const startY = -20;
                 confetti.style.left = `${startX}px`;
                 confetti.style.top = `${startY}px`;
 
-                // Random end position (x, y) and rotation
-                const endX = (Math.random() - 0.5) * completionScreen.offsetWidth * 1.5; // Wider spread
-                const endY = completionScreen.offsetHeight + 50; // Fall below screen
-                const rotation = Math.random() * 720 - 360; // -360 to 360 degrees
+                const endX = (Math.random() - 0.5) * completionScreen.offsetWidth * 1.5;
+                const endY = completionScreen.offsetHeight + 50;
+                const rotation = Math.random() * 720 - 360;
 
                 confetti.style.setProperty('--x', `${endX}px`);
                 confetti.style.setProperty('--y', `${endY}px`);
                 confetti.style.setProperty('--rot', `${rotation}deg`);
                 
-                // Randomize animation duration and delay
-                confetti.style.animationDuration = `${Math.random() * 2 + 2}s`; // 2 to 4 seconds
-                confetti.style.animationDelay = `${Math.random() * 0.5}s`; // 0 to 0.5 seconds delay
+                confetti.style.animationDuration = `${Math.random() * 2 + 2}s`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
 
                 completionScreen.appendChild(confetti);
 
-                // Remove confetti after animation to prevent DOM bloat
                 confetti.addEventListener('animationend', () => {
                     confetti.remove();
                 });
             }
         }
 
+        // Small confetti for individual correct answers
+        function createSmallConfetti(element) {
+            const rect = element.getBoundingClientRect();
+            const numParticles = 15; // Fewer particles
+            const colors = ['#FFD700', '#FF69B4', '#00FFFF']; // Fewer, brighter colors
+            const parent = document.body; // Attach to body to avoid clipping
 
-        // Initial Greeting Overlay Logic
+            for (let i = 0; i < numParticles; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti-small');
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                const size = Math.random() * 6 + 3;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                
+                const startX = rect.left + rect.width / 2;
+                const startY = rect.top + rect.height / 2;
+                confetti.style.left = `${startX}px`;
+                confetti.style.top = `${startY}px`;
+                confetti.style.position = 'fixed';
+                confetti.style.zIndex = 1000;
+                confetti.style.pointerEvents = 'none';
+
+                const endX = (Math.random() - 0.5) * 100 + (Math.random() > 0.5 ? 20 : -20);
+                const endY = Math.random() * 80 + 50;
+                const rotation = Math.random() * 360;
+
+                confetti.style.setProperty('--x', `${endX}px`);
+                confetti.style.setProperty('--y', `${endY}px`);
+                confetti.style.setProperty('--rot', `${rotation}deg`);
+                
+                confetti.style.animationDuration = `${Math.random() * 1.5 + 1}s`;
+                confetti.style.animationDelay = `${Math.random() * 0.1}s`; // Shorter delay
+
+                parent.appendChild(confetti);
+
+                confetti.addEventListener('animationend', () => {
+                    confetti.remove();
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            const greetingOverlay = document.getElementById('greetingOverlay');
-            setTimeout(() => {
-                greetingOverlay.classList.add('hidden');
-            }, 2500); // Show for 2.5 seconds
-
             // Add glitter event listeners to buttons
             document.querySelectorAll('.btn').forEach(button => {
                 button.addEventListener('click', createGlitter);
             });
             document.querySelectorAll('.word-block').forEach(block => {
-                block.addEventListener('click', createGlitter); // Also add to word blocks
+                block.addEventListener('click', createGlitter);
             });
         });
 
@@ -1163,68 +1185,79 @@
         function checkAnswer() {
             const feedback = document.getElementById('feedback' + currentQuestion);
             let isCorrect = false;
+            let feedbackText = '';
 
             if (currentQuestion === 1) {
                 const dragZone = document.getElementById('dragZone1');
-                const words = Array.from(dragZone.children).map(child => child.textContent.trim());
-                const correctOrder = ['Ich', 'gehe', 'gern', 'ins', 'Kino'];
+                const words = Array.from(dragZone.children).map(child => normalizeString(child.textContent));
+                const correctOrder = ['ich', 'gehe', 'gern', 'ins', 'kino']; // Normalized correct answer
                 
                 isCorrect = JSON.stringify(words) === JSON.stringify(correctOrder);
                 
                 if (isCorrect) {
-                    feedback.className = 'feedback correct';
-                    feedback.textContent = 'Perfect! You correctly built: "Ich gehe gern ins Kino." Notice how "gehe" matches with "ich" (first person singular).';
+                    feedbackText = 'Perfect! You correctly built: "Ich gehe gern ins Kino." Notice how "gehe" matches with "ich" (first person singular).';
                     score++;
+                    createSmallConfetti(dragZone);
                 } else {
-                    feedback.className = 'feedback incorrect';
-                    feedback.textContent = 'Not quite right. The correct order is: Ich gehe gern ins Kino. (I go to the cinema gladly)';
+                    feedbackText = 'Not quite right. The correct order is: Ich gehe gern ins Kino. (I go to the cinema gladly)';
                 }
             } else if (currentQuestion === 2) {
-                const ichVal = document.getElementById('ich-input').value.toLowerCase().trim();
-                const duVal = document.getElementById('du-input').value.toLowerCase().trim();
-                const erVal = document.getElementById('er-input').value.toLowerCase().trim();
+                const ichVal = normalizeString(document.getElementById('ich-input').value);
+                const duVal = normalizeString(document.getElementById('du-input').value);
+                const erVal = normalizeString(document.getElementById('er-input').value);
                 
-                isCorrect = ichVal === 'suche' && duVal === 'suchst' && erVal === 'sucht';
+                let incorrectParts = [];
+                if (ichVal !== 'suche') incorrectParts.push('"ich" (suche)');
+                if (duVal !== 'suchst') incorrectParts.push('"du" (suchst)');
+                if (erVal !== 'sucht') incorrectParts.push('"er/sie/es" (sucht)');
+
+                isCorrect = incorrectParts.length === 0;
                 
                 if (isCorrect) {
-                    feedback.className = 'feedback correct';
-                    feedback.textContent = 'Excellent! You nailed the conjugation pattern: ich suche, du suchst, er/sie/es sucht.';
+                    feedbackText = 'Excellent! You nailed the conjugation pattern: ich suche, du suchst, er/sie/es sucht.';
                     score++;
+                    createSmallConfetti(document.getElementById('er-input'));
                 } else {
-                    feedback.className = 'feedback incorrect';
-                    feedback.textContent = 'Try again! Remember: ich suche, du suchst, er/sie/es sucht. Regular verbs follow this pattern.';
+                    feedbackText = `Try again! Your ${incorrectParts.join(', ')} conjugation${incorrectParts.length > 1 ? 's are' : ' is'} incorrect. Remember: ich suche, du suchst, er/sie/es sucht.`;
                 }
             } else if (currentQuestion === 3) {
-                const freuen = document.getElementById('freuen').value.toLowerCase().trim();
-                const kommen = document.getElementById('kommen').value.toLowerCase().trim();
-                const lernen = document.getElementById('lernen').value.toLowerCase().trim();
-                const spielen = document.getElementById('spielen').value.toLowerCase().trim();
+                const freuen = normalizeString(document.getElementById('freuen').value);
+                const kommen = normalizeString(document.getElementById('kommen').value);
+                const lernen = normalizeString(document.getElementById('lernen').value);
+                const spielen = normalizeString(document.getElementById('spielen').value);
                 
-                isCorrect = freuen === 'e' && kommen === 'e' && lernen === 't' && spielen === 'en';
+                let incorrectParts = [];
+                if (freuen !== 'e') incorrectParts.push('freuen (-e)');
+                if (kommen !== 'e') incorrectParts.push('kommen (-e)');
+                if (lernen !== 't') incorrectParts.push('lernen (-t)');
+                if (spielen !== 'en') incorrectParts.push('spielen (-en)');
+
+                isCorrect = incorrectParts.length === 0;
                 
                 if (isCorrect) {
-                    feedback.className = 'feedback correct';
-                    feedback.textContent = 'Fantastic! You understood the context perfectly. "ich" takes -e, "Max" (third person) takes -t, "wir" takes -en.';
+                    feedbackText = 'Fantastic! You understood the context perfectly. "ich" takes -e, "Max" (third person) takes -t, "wir" takes -en.';
                     score++;
+                    createSmallConfetti(document.getElementById('spielen'));
                 } else {
-                    feedback.className = 'feedback incorrect';
-                    feedback.textContent = 'Check your endings: ich freue (-e), ich komme (-e), Max lernt (-t), wir spielen (-en).';
+                    feedbackText = `Check your endings: ${incorrectParts.join(', ')}. Remember: ich freue (-e), ich komme (-e), Max lernt (-t), wir spielen (-en).`;
                 }
             } else if (currentQuestion === 4) {
                 const pronunciationFeedback = document.getElementById('pronunciationFeedback');
                 pronunciationFeedback.style.display = 'block';
                 
-                feedback.className = 'feedback correct';
-                feedback.textContent = 'Excellent speaking practice! Your pronunciation analysis is complete above.';
-                isCorrect = true;
+                feedbackText = 'Excellent speaking practice! Your pronunciation analysis is complete above.';
+                isCorrect = true; // Speaking is always "correct" for demo purposes
             }
 
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.textContent = feedbackText;
             feedback.style.display = 'block';
             document.getElementById('nextBtn').textContent = 'Next Question';
             document.getElementById('nextBtn').onclick = nextQuestion;
         }
 
         function nextQuestion() {
+            navSound.triggerAttackRelease("C4", "16n"); // Play sound on next
             if (currentQuestion < totalQuestions) {
                 currentQuestion++;
                 showQuestion(currentQuestion);
@@ -1255,7 +1288,7 @@
                     completionHeading.classList.remove('keep-practicing');
                     scoreMessage.textContent = `You've demonstrated a strong grasp of German present tense! Your understanding of verb endings and sentence structure is impressive.`;
                     
-                    createConfetti(); // Trigger confetti
+                    createConfetti(); // Trigger large confetti on overall success
                     passSynth.triggerAttackRelease("C5", "8n"); // Play a success sound
 
                     if (completionVideo) {
@@ -1339,6 +1372,7 @@
         }
 
         function previousQuestion() {
+            navSound.triggerAttackRelease("D4", "16n"); // Play sound on previous
             if (currentQuestion > 1) {
                 currentQuestion--;
                 showQuestion(currentQuestion);
