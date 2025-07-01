@@ -974,6 +974,7 @@
         const passSynth = new Tone.Synth().toDestination();
         const failSynth = new Tone.MembraneSynth().toDestination();
         const navSound = new Tone.PluckSynth().toDestination(); // New synth for navigation sounds
+        const confettiSound = new Tone.NoiseSynth().toDestination(); // Sound for confetti
 
         // Helper function for robust string comparison
         function normalizeString(str) {
@@ -1024,15 +1025,15 @@
         // Confetti effect for completion screen
         function createConfetti() {
             const completionScreen = document.getElementById('completion');
-            const numConfetti = 100;
-            const colors = ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F', '#FF4500', '#8A2BE2', '#00BFFF']; // More colors
+            const numConfetti = 150; // More confetti
+            const colors = ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F', '#FF4500', '#8A2BE2', '#00BFFF', '#FFC0CB', '#90EE90']; // More colors
 
             for (let i = 0; i < numConfetti; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 
-                const size = Math.random() * 10 + 5; // Size between 5px and 15px
+                const size = Math.random() * 12 + 6; // Larger size variation
                 confetti.style.width = `${size}px`;
                 confetti.style.height = `${size}px`;
                 
@@ -1041,16 +1042,16 @@
                 confetti.style.left = `${startX}px`;
                 confetti.style.top = `${startY}px`;
 
-                const endX = (Math.random() - 0.5) * completionScreen.offsetWidth * 1.5;
-                const endY = completionScreen.offsetHeight + 50;
-                const rotation = Math.random() * 720 - 360;
+                const endX = (Math.random() - 0.5) * completionScreen.offsetWidth * 2; // Wider spread
+                const endY = completionScreen.offsetHeight + 100; // Fall further below screen
+                const rotation = Math.random() * 1080 - 540; // More rotation
 
                 confetti.style.setProperty('--x', `${endX}px`);
                 confetti.style.setProperty('--y', `${endY}px`);
                 confetti.style.setProperty('--rot', `${rotation}deg`);
                 
-                confetti.style.animationDuration = `${Math.random() * 2 + 2}s`;
-                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.animationDuration = `${Math.random() * 2.5 + 2.5}s`; // Longer duration
+                confetti.style.animationDelay = `${Math.random() * 0.8}s`; // More delay variation
 
                 completionScreen.appendChild(confetti);
 
@@ -1058,13 +1059,14 @@
                     confetti.remove();
                 });
             }
+            confettiSound.triggerAttackRelease("C6", "8n"); // Play sound for large confetti
         }
 
         // Small confetti for individual correct answers
         function createSmallConfetti(element) {
             const rect = element.getBoundingClientRect();
-            const numParticles = 15; // Fewer particles
-            const colors = ['#FFD700', '#FF69B4', '#00FFFF']; // Fewer, brighter colors
+            const numParticles = 25; // More particles
+            const colors = ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F']; // Brighter colors
             const parent = document.body; // Attach to body to avoid clipping
 
             for (let i = 0; i < numParticles; i++) {
@@ -1072,7 +1074,7 @@
                 confetti.classList.add('confetti-small');
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 
-                const size = Math.random() * 6 + 3;
+                const size = Math.random() * 8 + 4; // Larger size for small confetti
                 confetti.style.width = `${size}px`;
                 confetti.style.height = `${size}px`;
                 
@@ -1084,16 +1086,16 @@
                 confetti.style.zIndex = 1000;
                 confetti.style.pointerEvents = 'none';
 
-                const endX = (Math.random() - 0.5) * 100 + (Math.random() > 0.5 ? 20 : -20);
-                const endY = Math.random() * 80 + 50;
-                const rotation = Math.random() * 360;
+                const endX = (Math.random() - 0.5) * 150 + (Math.random() > 0.5 ? 30 : -30); // Wider scatter
+                const endY = Math.random() * 100 + 70; // Fall further
+                const rotation = Math.random() * 540 - 270; // More rotation
 
                 confetti.style.setProperty('--x', `${endX}px`);
                 confetti.style.setProperty('--y', `${endY}px`);
                 confetti.style.setProperty('--rot', `${rotation}deg`);
                 
-                confetti.style.animationDuration = `${Math.random() * 1.5 + 1}s`;
-                confetti.style.animationDelay = `${Math.random() * 0.1}s`; // Shorter delay
+                confetti.style.animationDuration = `${Math.random() * 1.8 + 1.2}s`; // Longer duration
+                confetti.style.animationDelay = `${Math.random() * 0.2}s`; // More delay variation
 
                 parent.appendChild(confetti);
 
@@ -1101,6 +1103,7 @@
                     confetti.remove();
                 });
             }
+            confettiSound.triggerAttackRelease("C5", "16n"); // Play sound for small confetti
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1111,7 +1114,36 @@
             document.querySelectorAll('.word-block').forEach(block => {
                 block.addEventListener('click', createGlitter);
             });
+
+            // Add click listener to words in drag zone to return them
+            const dragZone = document.getElementById('dragZone1');
+            dragZone.addEventListener('click', function(event) {
+                const clickedElement = event.target;
+                if (clickedElement.classList.contains('word-block') && clickedElement.classList.contains('used')) {
+                    returnWordToOptions(clickedElement);
+                }
+            });
         });
+
+        // Function to return a word from drag zone to word options
+        function returnWordToOptions(wordElement) {
+            const wordOptionsContainer = document.querySelector('.word-options');
+            if (wordOptionsContainer && wordElement.parentNode === document.getElementById('dragZone1')) {
+                wordElement.classList.remove('used');
+                wordElement.draggable = true;
+                wordOptionsContainer.appendChild(wordElement);
+
+                // If drag zone becomes empty, show placeholder
+                const dragZone = document.getElementById('dragZone1');
+                if (dragZone.children.length === 0) {
+                    const placeholder = document.createElement('span');
+                    placeholder.style.color = '#999';
+                    placeholder.textContent = 'Drop words here to build your sentence...';
+                    dragZone.appendChild(placeholder);
+                }
+            }
+        }
+
 
         // Drag and Drop functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -1197,7 +1229,7 @@
                 if (isCorrect) {
                     feedbackText = 'Perfect! You correctly built: "Ich gehe gern ins Kino." Notice how "gehe" matches with "ich" (first person singular).';
                     score++;
-                    createSmallConfetti(dragZone);
+                    createSmallConfetti(dragZone); // Confetti on correct answer
                 } else {
                     feedbackText = 'Not quite right. The correct order is: Ich gehe gern ins Kino. (I go to the cinema gladly)';
                 }
@@ -1216,7 +1248,7 @@
                 if (isCorrect) {
                     feedbackText = 'Excellent! You nailed the conjugation pattern: ich suche, du suchst, er/sie/es sucht.';
                     score++;
-                    createSmallConfetti(document.getElementById('er-input'));
+                    createSmallConfetti(document.getElementById('er-input')); // Confetti on correct answer
                 } else {
                     feedbackText = `Try again! Your ${incorrectParts.join(', ')} conjugation${incorrectParts.length > 1 ? 's are' : ' is'} incorrect. Remember: ich suche, du suchst, er/sie/es sucht.`;
                 }
@@ -1237,7 +1269,7 @@
                 if (isCorrect) {
                     feedbackText = 'Fantastic! You understood the context perfectly. "ich" takes -e, "Max" (third person) takes -t, "wir" takes -en.';
                     score++;
-                    createSmallConfetti(document.getElementById('spielen'));
+                    createSmallConfetti(document.getElementById('spielen')); // Confetti on correct answer
                 } else {
                     feedbackText = `Check your endings: ${incorrectParts.join(', ')}. Remember: ich freue (-e), ich komme (-e), Max lernt (-t), wir spielen (-en).`;
                 }
@@ -1286,7 +1318,7 @@
                     completionHeading.textContent = '🎉 Ausgezeichnet!';
                     completionHeading.classList.add('congrats');
                     completionHeading.classList.remove('keep-practicing');
-                    scoreMessage.textContent = `You've demonstrated a strong grasp of German present tense! Your understanding of verb endings and sentence structure is impressive.`;
+                    scoreMessage.textContent = `You've demonstrated a strong grasp of German present tense! Your understanding of verb endings and sentence structure is impressive. Now be honest, is it better or worse than MCQ quizzes and pdf exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
                     
                     createConfetti(); // Trigger large confetti on overall success
                     passSynth.triggerAttackRelease("C5", "8n"); // Play a success sound
@@ -1300,7 +1332,7 @@
                     completionHeading.textContent = 'Keep Practicing!';
                     completionHeading.classList.add('keep-practicing');
                     completionHeading.classList.remove('congrats');
-                    scoreMessage.textContent = `You're making progress! Review the conjugation rules and try again to solidify your understanding.`;
+                    scoreMessage.textContent = `You're making progress! Review the conjugation rules and try again to solidify your understanding. Now be honest, is it better or worse than MCQ quizzes and pdf exercises? If so, what are you waiting for? Implement it!! TU ES EINFACH!`;
                     
                     failSynth.triggerAttackRelease("C2", "8n"); // Play a failure sound
                     
